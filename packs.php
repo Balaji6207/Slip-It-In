@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php include 'head.php'; ?>    
+    <title>Packs Page</title>
+</head>
+<style>
+    /* Background: rgba(32, 26, 80); */ 
+    /* Foreground: rgba(66, 70, 158); */ 
+    /* Forefround2: rgba(93, 94, 168); */ 
+    /* Text: rgba(251, 252, 255); */ 
+    /* Lines: rgba(120, 233, 209); */
+    .title {
+        color: white;
+        font-size: 5rem;
+        margin: 3vh 0 3vh 0;
+    }
+
+    html {
+        overflow-x: hidden;
+    }
+
+    .packsWrap {
+        width: 80vw;
+        height: 60vh;
+        overflow-y: scroll;
+        background-color: rgba(17, 13, 48, 1);
+        border: 0.5rem inset rgb(32, 26, 80);
+        border-radius: 2rem;
+        padding: 3vh 2vw;
+    }
+
+    .packsWrap::-webkit-scrollbar {
+        display: none;
+    }
+
+    #packs {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));        
+        gap: 2vw;
+        width: 100%;
+    }
+
+    .pack {
+        position: relative;
+        padding: 1.5vh 1.5vw;
+        border-radius: 1rem;
+        cursor: pointer;
+        box-shadow: 0 1vh 0 rgba(0, 0, 0, 1), 
+            inset 0 -0.5vh 2vw rgba(0, 0, 0, 0.6);        
+        outline: 0.2rem outset white;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .pack .name {
+        color: white;
+        text-shadow: 0 1vh 1rem black;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .pack .desc {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.5rem;
+    }
+
+    .pack .tick {
+        position: absolute;
+        top: 1rem;
+        right: 2rem;
+        font-size: 2rem;
+        color: black;
+        display: none;
+    }
+
+    .pack.selected {
+        background: rgba(120, 233, 209) !important; 
+        box-shadow: none;
+        box-shadow:  0 1vh 0  rgba(33, 99, 85, 1);
+        outline: 0.2rem solid rgb(120, 233, 209); 
+    }
+
+    .pack.selected .name {
+        color: rgba(0, 0, 0, 1);
+        text-shadow: none;
+    }
+
+    .pack.selected .desc {
+        text-shadow: none;
+        color: rgba(0, 0, 0, 0.52);
+    }   
+
+    .pack.selected .tick {
+        display: block;
+    }
+
+    #proceedBtn {
+        margin-top: 3vh;
+        padding: 2vh 5vw;
+        font-weight: bold;
+        font-size: 2.5rem;
+        background-color: rgb(60, 46, 165);
+        box-shadow: -1vw 2vh 0 rgb(21, 19, 46);
+        border: none;
+        border-radius: 1rem;
+        cursor: pointer;
+    }
+
+    @media screen and (max-width: 768px) { /* Mobile Screen*/
+        .title {
+            color: white;
+            font-size: 3rem;
+            font-weight: lighter;
+            margin: 1.5vh 0 1.5vh 0;
+        }
+
+        .packsWrap {
+            width: 85vw;
+            height: 70vh;
+        }
+
+        #packs {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 5vw;
+        }
+
+        .pack {
+            padding: 2vh 3vw;      
+            outline: 0.2rem outset white;
+        }
+
+        .pack .name {
+            font-size: 1.7rem;
+        }
+
+        .pack .tick {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            color: black;
+            display: none;
+        }
+
+        .pack.selected {
+            background: rgba(120, 233, 209) !important; 
+            box-shadow: none;
+            box-shadow:  0 1vh 0  rgba(33, 99, 85, 1);
+            outline: 0.2rem solid rgb(120, 233, 209); 
+        }
+
+        .pack.selected .name {
+            color: rgba(0, 0, 0, 1);
+            text-shadow: none;
+        }
+
+        .pack.selected .desc {
+            text-shadow: none;
+            color: rgba(0, 0, 0, 0.52);
+        }   
+
+        .pack.selected .tick {
+            display: block;
+        }
+
+        #proceedBtn {
+            margin-top: 2vh;
+            padding: 2vh 5vw;
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<body>
+<?php include 'tiles.php'; ?>
+
+<h2 class="title" id="selectedCount"></h2>
+
+<div class="packsWrap">
+    <div id="packs"></div>
+</div>
+
+<button id="proceedBtn">Proceed</button>
+
+<script>
+    const packs = [];
+
+    function addPack(name, desc, filepath, bgColor){
+        packs.push({ name, desc, filepath, bgColor });
+        renderGrid();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('packs');
+        grid.innerHTML = '';
+        packs.forEach((pack, index) => {
+            const div = document.createElement('div');
+            div.className = 'pack';
+            div.style.background = `linear-gradient( 
+            rgba(0, 0, 0, 0.9),
+            ${pack.bgColor}
+            )`;
+            div.style.backgroundColor = `${pack.bgColor}`;
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'name';
+            nameEl.textContent = pack.name;
+
+            const descEl = document.createElement('div');
+            descEl.className = 'desc';
+            descEl.textContent = pack.desc || '';
+
+            const tickEl = document.createElement('div');
+            tickEl.className = 'tick';
+            tickEl.innerHTML = '✔';
+
+            div.appendChild(nameEl);
+            div.appendChild(descEl);
+            div.appendChild(tickEl);
+
+            div.addEventListener('click', () => togglePack(index, div));
+            grid.appendChild(div);
+        });
+    }
+
+    const selectedPacks = new Set();
+
+    function togglePack(index, element) {
+        if (selectedPacks.has(index)) {
+            selectedPacks.delete(index);
+            element.classList.remove('selected');
+        } else {
+            selectedPacks.add(index);
+            element.classList.add('selected');
+        }
+        updateSelectedCount(); 
+    }
+
+    function updateSelectedCount() {
+        const total = packs.length;
+        const selected = selectedPacks.size;
+        document.getElementById('selectedCount').textContent = `Selected ${selected}/${total}`;
+        if (selected == 0){
+            document.getElementById('proceedBtn').style.display = 'none';
+        } else {
+            document.getElementById('proceedBtn').style.display = 'block';
+        }
+    }
+
+    document.getElementById('proceedBtn').addEventListener('click', () => {
+        const selectedFilePaths = Array.from(selectedPacks).map(i => packs[i].filepath);
+        localStorage.setItem('selectedPacks', JSON.stringify(selectedFilePaths));
+
+        window.location.href = 'draw.php';
+    });
+
+    const familyColor = 'rgba(255, 200, 0, 1)';
+    const nsfwColor = 'rgba(255, 0, 0, 1)';
+    const darkColor = 'rgba(56, 0, 74, 1)';
+
+    addPack('Family Edition Easy', 'Simple and common phrases, suited for family', 'SFW/Phrases1.txt', familyColor);
+    addPack('Family Edition Medium', 'Slightly wilder phrases, suited for family', 'SFW/Phrases2.txt', familyColor);
+    addPack('Family Edition Hard', 'Wild phrases, suited for family', 'SFW/Phrases3.txt', familyColor);
+    addPack('NSFW Easy', 'Mild phrases, not safe for work', 'NSFW/Phrases1.txt', nsfwColor);
+    addPack('NSFW Medium', 'Slightly wilder phrases, not safe for work', 'NSFW/Phrases2.txt', nsfwColor);
+    addPack('NSFW Hard', 'Wild phrases, not safe for work', 'NSFW/Phrases3.txt', nsfwColor);
+    addPack('Dark Edition Easy', 'Mild and edgy phrases', 'Dark/Phrases1.txt', darkColor);
+    addPack('Dark Edition Medium', 'Slightly wilder and edgy phrases', 'Dark/Phrases2.txt', darkColor);
+    addPack('Dark Hard', 'Wild and edgy phrases', 'Dark/Phrases3.txt', darkColor);
+
+    updateSelectedCount();
+</script>
+<script>
+    const pack = document.querySelectorAll(".pack");
+    pack.addEventListener('dblclick', (event) => {
+        
+    });
+</script>
+
+</body>
+</html>

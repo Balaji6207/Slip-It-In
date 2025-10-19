@@ -1,0 +1,41 @@
+body {
+    background-color: rgba(32, 26, 80);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: "Roboto Condensed";
+    user-select: none;
+}
+
+.tiles {
+    position: fixed;
+    bottom: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.tiles .mobile {
+    display: none;
+}
+
+.tiles .desktop {
+    display: block;
+    width: 100%;
+    opacity: 0.2;
+}
+
+@media screen and (max-width: 768px) { /* Mobile Screen*/
+    .tiles .mobile {
+        display: block;            
+        width: 100vw;
+        opacity: 0.2;
+    }
+
+    .tiles .desktop {
+        display: none;
+    }
+}

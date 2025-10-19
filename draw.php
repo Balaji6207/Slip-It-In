@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
+    <link rel="stylesheet" href="background.css">
+    <link rel="icon" href="img/favicon.jpg">
+    <title>Draw Page</title>
+</head>
+<style>
+    /* Background: rgba(32, 26, 80); */ 
+    /* Foreground: rgba(66, 70, 158); */ 
+    /* Forefround2: rgba(93, 94, 168); */ 
+    /* Text: rgba(251, 252, 255); */ 
+    /* Lines: rgba(120, 233, 209); */
+
+    body {
+        background-color: rgba(32, 26, 80);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        font-family: "Roboto Condensed";
+        user-select: none;
+        position: relative;
+    }
+
+    .home {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgb(60, 46, 165);
+        padding: 1.5vh;
+        border-bottom-right-radius: 50%;
+        box-shadow: 1.5vh 1.5vh 0 rgb(21, 19, 46);
+        z-index: 1000;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+    }
+   
+    .home img {
+        width: 3vw;
+        display: block;
+    }
+
+    .timer {
+        position: fixed;
+        top: 2vh;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(17, 13, 48, 0.9);
+        color: rgba(120, 233, 209);
+        font-size: 3rem;
+        font-weight: bold;
+        padding: 1vh 3vw;
+        border-radius: 1rem;
+        box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .cardsContainer {
+        margin-top: 12vh;
+        margin-bottom: 15vh;
+        width: 95vw;
+        max-width: 1200px;
+    }
+
+    #cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        padding: 2rem;
+    }
+
+    .card {
+        aspect-ratio: 7/3;
+        background-color: rgba(66, 70, 158);
+        border-radius: 1rem;
+        box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transform-style: preserve-3d;
+        opacity: 1;
+        padding: 2rem;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .card.initial-flip {
+        animation: flipIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    .card.flip-animation {
+        animation: flipCard 0.5s ease-out;
+    }
+
+    .card.selected {
+        transform: scale(1.05) translateY(-10px);
+        outline: 0.3rem solid rgba(120, 233, 209);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .card.zoom-out {
+        animation: zoomOut 0.4s ease-out forwards;
+    }
+
+    .card.zoom-in {
+        animation: zoomIn 0.4s ease-out forwards;
+    }
+
+    .card .phrase {
+        color: rgba(251, 252, 255);
+        font-size: 1.7rem;
+        font-weight: bold;
+        word-wrap: break-word;
+    }
+
+    @keyframes flipIn {
+        0% {
+            transform: rotateY(-90deg);
+            opacity: 0;
+        }
+        100% {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+    }
+
+    @keyframes flipCard {
+        0% {
+            transform: rotateY(0deg);
+        }
+        50% {
+            transform: rotateY(90deg);
+        }
+        100% {
+            transform: rotateY(0deg);
+        }
+    }
+
+    @keyframes zoomOut {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(0);
+            opacity: 0;
+        }
+    }
+
+    @keyframes zoomIn {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .buttonContainer {
+        position: fixed;
+        bottom: 2vh;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 2rem;
+        z-index: 1000;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .actionBtn {
+        padding: 1.5vh 4vw;
+        font-size: 2rem;
+        font-weight: bold;
+        background-color: rgb(60, 46, 165);
+        color: rgba(251, 252, 255);
+        border: none;
+        border-radius: 1rem;
+        box-shadow: -0.5vw 1vh 0 rgb(21, 19, 46);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Roboto Condensed";
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .actionBtn:hover {
+        background-color: rgba(120, 233, 209);
+        color: rgba(32, 26, 80);
+        transform: scale(1.05);
+    }
+
+    .actionBtn.discard {
+        background-color: rgba(200, 50, 50);
+    }
+
+    .actionBtn.discard:hover {
+        background-color: rgba(255, 80, 80);
+    }
+
+    .actionBtn.replace {
+        background-color: rgba(255, 150, 0);
+    }
+
+    .actionBtn.replace:hover {
+        background-color: rgba(255, 180, 50);
+    }
+
+    @media screen and (max-width: 768px) {
+        .home img {
+            width: 8vw;
+        }
+
+        .timer {
+            font-size: 2rem;
+            padding: 1vh 5vw;
+        }
+
+        #cards {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .card .phrase {
+            font-size: 1.4rem;
+        }
+
+        .actionBtn {
+            padding: 1.5vh 10vw;
+            font-size: 1.5rem;
+        }
+
+        .buttonContainer {
+            gap: 1rem;
+        }
+    }
+</style>
+
+<body>
+
+<div class="home" onclick="window.location.href='index.php'">
+    <img src="img/home.png" alt="Home">
+</div>
+
+<div class="timer" id="timer">0:00</div>
+
+<div class="cardsContainer">
+    <div id="cards"></div>
+</div>
+
+<div class="buttonContainer" id="buttonContainer"></div>
+
+<script>
+    let allPhrases = [];
+    let usedPhrases = new Set();
+    let currentCards = [];
+    let selectedCardIndex = null;
+    let timerInterval;
+    let seconds = 0;
+    let isInitialLoad = true;
+    let cardElements = [];
+
+    // Timer
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    // Load phrases from selected packs
+    async function loadPhrases() {
+        const selectedPacks = JSON.parse(localStorage.getItem('selectedPacks') || '[]');
+        
+        if (selectedPacks.length === 0) {
+            alert('No packs selected! Redirecting to packs page.');
+            window.location.href = 'packs.php';
+            return;
+        }
+
+        for (const filepath of selectedPacks) {
+            try {
+                const response = await fetch(filepath);
+                const text = await response.text();
+                const phrases = text.split(',').map(p => p.trim()).filter(p => p);
+                allPhrases.push(...phrases);
+            } catch (error) {
+                console.error(`Error loading ${filepath}:`, error);
+            }
+        }
+
+        if (allPhrases.length === 0) {
+            alert('No phrases loaded!');
+            return;
+        }
+
+        // Draw initial 5 cards
+        for (let i = 0; i < 5; i++) {
+            const phrase = getRandomPhrase();
+            if (phrase) {
+                currentCards.push({ phrase });
+            }
+        }
+        
+        renderCards();
+        
+        setTimeout(() => {
+            isInitialLoad = false;
+        }, 1000);
+
+        startTimer();
+    }
+
+    function getRandomPhrase() {
+        const availablePhrases = allPhrases.filter(p => !usedPhrases.has(p));
+        
+        if (availablePhrases.length === 0) {
+            return null;
+        }
+
+        const randomIndex = Math.floor(Math.random() * availablePhrases.length);
+        const phrase = availablePhrases[randomIndex];
+        usedPhrases.add(phrase);
+        return phrase;
+    }
+
+    function createCardElement(cardData, index) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.index = index;
+        
+        const phraseEl = document.createElement('div');
+        phraseEl.className = 'phrase';
+        phraseEl.textContent = cardData.phrase;
+
+        card.appendChild(phraseEl);
+        card.addEventListener('click', () => selectCard(index));
+        
+        return card;
+    }
+
+    function renderCards() {
+        const container = document.getElementById('cards');
+        container.innerHTML = '';
+        cardElements = [];
+
+        currentCards.forEach((cardData, index) => {
+            const card = createCardElement(cardData, index);
+            
+            // Only add initial flip animation on page load
+            if (isInitialLoad) {
+                card.classList.add('initial-flip');
+                card.style.animationDelay = `${index * 0.1}s`;
+            }
+            
+            if (selectedCardIndex === index) {
+                card.classList.add('selected');
+            }
+
+            container.appendChild(card);
+            cardElements.push(card);
+        });
+
+        updateButtons();
+    }
+
+    function animateCard(index) {
+        if (cardElements[index]) {
+            const card = cardElements[index];
+            card.classList.add('flip-animation');
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                card.classList.remove('flip-animation');
+            }, 500);
+        }
+    }
+
+    function selectCard(index) {
+        const previousSelection = selectedCardIndex;
+        
+        if (selectedCardIndex === index) {
+            selectedCardIndex = null;
+        } else {
+            selectedCardIndex = index;
+        }
+        
+        // Update selection states without animation
+        if (previousSelection !== null && cardElements[previousSelection]) {
+            cardElements[previousSelection].classList.remove('selected');
+        }
+        
+        if (selectedCardIndex !== null && cardElements[selectedCardIndex]) {
+            cardElements[selectedCardIndex].classList.add('selected');
+        }
+        
+        updateButtons();
+    }
+
+    function updateButtons() {
+        const container = document.getElementById('buttonContainer');
+        container.innerHTML = '';
+
+        if (selectedCardIndex !== null) {
+            // Show Discard and Replace buttons
+            const discardBtn = document.createElement('button');
+            discardBtn.className = 'actionBtn discard';
+            discardBtn.textContent = 'Discard';
+            discardBtn.addEventListener('click', discardCard);
+
+            const replaceBtn = document.createElement('button');
+            replaceBtn.className = 'actionBtn replace';
+            replaceBtn.textContent = 'Replace';
+            replaceBtn.addEventListener('click', replaceCard);
+
+            container.appendChild(discardBtn);
+            container.appendChild(replaceBtn);
+        } else {
+            // Show Draw button
+            const drawBtn = document.createElement('button');
+            drawBtn.className = 'actionBtn';
+            drawBtn.textContent = 'Draw';
+            drawBtn.addEventListener('click', drawCard);
+
+            container.appendChild(drawBtn);
+        }
+    }
+
+    function discardCard() {
+        if (selectedCardIndex !== null) {
+            const indexToDiscard = selectedCardIndex;
+            const cardToDiscard = cardElements[indexToDiscard];
+            
+            // Zoom out animation
+            cardToDiscard.classList.add('zoom-out');
+            
+            setTimeout(() => {
+                currentCards.splice(indexToDiscard, 1);
+                selectedCardIndex = null;
+                renderCards();
+            }, 400);
+        }
+    }
+
+    function replaceCard() {
+        if (selectedCardIndex !== null) {
+            const newPhrase = getRandomPhrase();
+            
+            if (!newPhrase) {
+                alert('No more unique phrases available!');
+                return;
+            }
+
+            const indexToReplace = selectedCardIndex;
+            const card = cardElements[indexToReplace];
+            const phraseEl = card.querySelector('.phrase');
+            
+            // Remove selected state
+            card.classList.remove('selected');
+            
+            // Start flip animation
+            card.classList.add('flip-animation');
+            
+            // Change phrase at halfway point (when card is rotated 90deg)
+            setTimeout(() => {
+                currentCards[indexToReplace] = { phrase: newPhrase };
+                phraseEl.textContent = newPhrase;
+            }, 250);
+            
+            // Clean up and update state after animation
+            setTimeout(() => {
+                card.classList.remove('flip-animation');
+                selectedCardIndex = null;
+                updateButtons();
+            }, 500);
+        }
+    }
+
+    function drawCard() {
+        const phrase = getRandomPhrase();
+        
+        if (!phrase) {
+            alert('No more unique phrases available!');
+            return;
+        }
+
+        const cardData = { phrase };
+        currentCards.push(cardData);
+        const newCardIndex = currentCards.length - 1;
+
+        // Create and add the new card
+        const container = document.getElementById('cards');
+        const card = createCardElement(cardData, newCardIndex);
+        
+        // Animate the new card with zoom in
+        card.classList.add('zoom-in');
+        
+        container.appendChild(card);
+        cardElements.push(card);
+
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+        
+        // Remove animation class after animation completes
+        setTimeout(() => {
+            card.classList.remove('zoom-in');
+        }, 400);
+    }
+
+    // Initialize
+    loadPhrases();
+</script>
+
+</body>
+</html>
