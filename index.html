@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include 'head.php'; ?>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto Condensed">
+    <link rel="stylesheet" href="background.css">
+    <link rel="icon" href="img/favicon.jpg">
     <title>Home Page</title>
 </head>
 <style>
@@ -197,7 +201,10 @@
 </style>
 
 <body>
-<?php include 'tiles.php'; ?>
+<div class="tiles">
+    <img class="mobile" src="img/tiles1.png">
+    <img class="desktop" src="img/tiles2.png">
+</div>
 
 <div class="title">
     <h2>Can you...</h2>
@@ -209,7 +216,7 @@
 </div>
 
 <div class="btnWrap">    
-    <button class="startBtn" onclick="window.location.href='packs.php'">
+    <button class="startBtn" onclick="window.location.href='packs.html'">
         Start ▶
     </button>
     <img class="spark" src="img/spark.png">
